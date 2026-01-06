@@ -1,0 +1,58 @@
+{% extends "auctions/layout.html" %} {% block body %}
+<h2>Create Listing</h2>
+
+<!-- Form to create a new listing -->
+<form action="{% url 'createlisting' %}" method="POST">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label for="exampleFormControlInput1" class="form-label">Title: </label>
+    <input type="text" class="form-control" name="title" required />
+  </div>
+
+  <div class="mb-3">
+    <label for="exampleFormControlInput1" class="form-label">ImageUrl: </label>
+    <input type="text" class="form-control" name="imagelink" required />
+  </div>
+
+  <!-- Textarea for the description of the listing -->
+  <div class="mb-3">
+    <label for="exampleFormControlTextarea1" class="form-label"
+      >Description:</label
+    >
+    <textarea
+      class="form-control"
+      rows="3"
+      name="description"
+      required
+    ></textarea>
+  </div>
+
+  <!-- Input for the price of the listing -->
+  <div class="mb-3">
+    <label for="exampleFormControlInput1" class="form-label">Price: </label>
+    <input type="number" class="form-control" name="price" min="0" required />
+  </div>
+
+  <!-- Dropdown for selecting the category of the listing -->
+  <div class="mb-3">
+    <label for="exampleFormControlInput1" class="form-label"
+      >Categories:
+    </label>
+    <select
+      class="form-select"
+      aria-label="Default select example"
+      name="category"
+      required
+    >
+      <option value="" disabled selected>Choose a Category</option>
+
+      {% for category in wholeCategory %}
+      <option value="{{ category.name }}">{{ category.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-success">Submit</button>
+</form>
+
+{% endblock %}

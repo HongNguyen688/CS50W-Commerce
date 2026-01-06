@@ -1,0 +1,160 @@
+{% extends "auctions/layout.html" %} {% block body %}
+
+<div style="max-width: 1370px; margin: 50px">
+  <h3>{{ listing.title }}</h3>
+
+  <div class="card mb-3">
+    <div class="row g-0" style="max-width: 90%; margin: 10px">
+      <div class="col-md-4" style="align: center">
+        <img
+          src="{{ listing.imageUrl}}"
+          class="img-fluid rounded-start"
+          alt="..."
+        />
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <p class="card-text">{{ listing.description}}</p>
+          <p class="card-text">
+            <small class="text-muted"> Owner by {{ listing.creator}}</small>
+          </p>
+          <p class="card-text"><b>${{ listing.price}}</b></p>
+
+          {% if user.is_authenticated %} {% if listing.isActive %}
+
+          <form
+            action="{% url 'addbid' category_id=listing.id %}"
+            method="POST"
+          >
+            {% csrf_token %}
+            <!-- CSRF token for security -->
+            <div class="mb-3" style="max-width: 100%; margin: 10px">
+              <label for="exampleFormControlTextarea1" class="form-label"
+                >Add new Bid:</label
+              >
+              <input type="number" name="bidprice" min="0" required />
+              <button type="submit" class="btn btn-success">Agreed Bid</button>
+            </div>
+          </form>
+          {% else %}
+          <p class="text-muted">
+            This auction is closed. Bidding is no longer available.
+          </p>
+          {% endif %} {% endif %}
+
+          <div>
+            {% if note %} {% if updatenote %}
+            <div class="alert alert-success" role="alert">{{ note }}</div>
+            {% else %}
+            <div class="alert alert-danger" role="alert">{{ note }}</div>
+            {% endif %} {% endif %}
+          </div>
+
+          <div>
+            {% if not listing.isActive %} {% if isWinner %}
+            <div class="alert alert-success" role="alert">
+              Congratulations! You did it! You have won the auction!
+            </div>
+            {% endif %} {% endif %}
+          </div>
+
+          <br />
+          <div>
+            {% if user.is_authenticated %}
+            <div class="row mb-3">
+              {% if isCreator and listing.isActive %}
+              <form
+                action="{% url 'closeAuction' category_id=listing.id %}"
+                method="POST"
+              >
+                {% csrf_token %}
+                <button
+                  type="submit"
+                  class="btn btn-outline-danger"
+                  style="margin-right: 15px"
+                >
+                  End Auction
+                </button>
+              </form>
+              {% endif %} {% if WatchList %}
+              <form
+                action="{% url 'removeProduct' category_id=listing.id %}"
+                method="POST"
+              >
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-secondary">
+                  Remove from Watchlist
+                </button>
+              </form>
+              {% else %}
+
+              <!-- Otherwise, show the option to add the listing to the watchlist -->
+              <form
+                action="{% url 'addProduct' category_id=listing.id %}"
+                method="POST"
+              >
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-success">
+                  Add to Watchlist
+                </button>
+              </form>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width: 1370px; margin: 50px">
+    <div>
+      <h3>Comment:</h3>
+      <!-- Section header for comments -->
+    </div>
+    <div>
+      {% if user.is_authenticated %}
+      <!-- Form to add a new comment if the user is authenticated -->
+      <form action="{% url 'addReview' category_id=listing.id %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3" style="max-width: 100%; margin: 10px">
+          <label for="exampleFormControlTextarea1" class="form-label"
+            >Add a comment:</label
+          >
+          <textarea
+            class="form-control"
+            rows="3"
+            name="newReview"
+            required
+          ></textarea>
+          <!-- Textarea for the comment -->
+        </div>
+        <button
+          type="submit"
+          class="btn btn-success"
+          style="float: right; margin-right: 30px"
+        >
+          Submit
+        </button>
+        <!-- Submit button for the comment form -->
+      </form>
+      {% endif %}
+    </div>
+
+    <ul class="list-group" style="margin-top: 80px; max-width: 100%">
+      <!-- List of comments displayed below the form -->
+      {% for review in allReview %}
+      <div style="margin-bottom: 20px">
+        <p class="card-text">
+          <small class="text-muted">
+            <i class="fas fa-user" style="margin-right: 7.5px"> </i> {{
+            review.user }}</small
+          >
+        </p>
+        <li class="list-group-item">{{ review.content }}</li>
+      </div>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

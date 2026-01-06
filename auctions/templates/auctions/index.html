@@ -1,0 +1,75 @@
+{% extends "auctions/layout.html" %} {% block body %}
+<h2>Active Listings</h2>
+<!-- Heading for the active listings page -->
+
+<div>
+  <form action="" method="POST">
+    {% csrf_token %}
+    <!-- Navigation bar for product categories -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Products Categories:</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a
+              class="nav-link active"
+              aria-current="page"
+              href="{% url 'showAllCategory' %}"
+              >All</a
+            >
+            {% for category in wholeCategory %}
+            <a
+              class="nav-link active"
+              href="{%  url 'showCategory' category.name %}"
+              >{{ category.name }}</a
+            >
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </nav>
+  </form>
+</div>
+
+<!-- Display the active listings in a responsive grid -->
+<div
+  class="row row-cols-1 row-cols-md-3 g-4"
+  style="max-width: 90%; margin: 50px"
+>
+  {% for listing in activelistings %}
+  <div class="col mb-4">
+    <!-- Card displaying listing details -->
+    <div class="card h-100">
+      <img
+        src="{{ listing.imageUrl }}"
+        class="card-img-top"
+        alt="{{ listing.title }}"
+      />
+      <div class="card-body">
+        <h4 class="card-title" style="color: blue">{{ listing.title }}</h4>
+        <p class="card-text">{{ listing.description }}</p>
+        <p class="card-text"><b>current price: ${{ listing.price }}</b></p>
+        <a
+          href="{% url 'listing' category_id=listing.id %}"
+          class="btn btn-primary"
+        >
+          Product Detail
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
